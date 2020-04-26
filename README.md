@@ -47,25 +47,15 @@
 
 ### config 可选参数
 
-
-| 字段  | 类型 | 作用 | 默认值 |
-
-| ------------ | ------------ | ------------ | ------------ |
-
-|  url | string  | websocket连接地址 | '' |
-
-|  heartBeat |  Array<String> | ```['PING', 'PENG']``` 心跳包交互字段，heartBeat[0]客户端发送字段，heartBeat[1]服务端回复字段 | ['PING', 'PENG'] |
-
-| heartMaxNumber  | Number | 心跳包最大离线次数，当服务端回复连续掉包次数大于此值时候会自动断开socket连接，并进行重新连接 | 3 |
-
-| hearTinterval | Number | 心跳包发送间隔 | 10000 |
-
-| sendType | string | 对发送后端的消息进行处理，可选值有 'STRING','JSON','BUFF'。设为STRING时候会传入数据处理为字符串在提交，设为JSON时候会对发送数据前进行校验是否为JSON，然后再转为JSON字符串进行数据到服务端。设为BUFF时候会对数据发送前进行校验是否为BUFF，然后进行数据提交 | JSON |
-
-| messageType | string | 说明后端回复数据的类型，可选值有 'STRING','JSON','BUFF'。设为STRING时候不会进行任何处理,接收数据不为STRING将数据串化。设为JSON会接收数据进行JSON.parse处理，接收数据不为JSON字符串将过滤。设为 BUFF不会对数据进行任何处理 | JSON |
-
+| 字段 | 类型 | 作用 | 默认值 |
+|---------|--------|-------------|--------|
+|  url             | string  | websocket连接地址 | '' |
+|  heartBeat       |  Array<String> | ```['PING', 'PENG']``` 心跳包交互字段，heartBeat[0]客户端发送字段，heartBeat[1]服务端回复字段 | ['PING', 'PENG'] |
+| heartMaxNumber   | Number | 心跳包最大离线次数，当服务端回复连续掉包次数大于此值时候会自动断开socket连接，并进行重新连接 | 3 |
+| hearTinterval    | Number | 心跳包发送间隔 | 10000 |
+| sendType         | string | 对发送后端的消息进行处理，可选值有 'STRING','JSON','BUFF'。设为STRING时候会传入数据处理为字符串在提交，设为JSON时候会对发送数据前进行校验是否为JSON，然后再转为JSON字符串进行数据到服务端。设为BUFF时候会对数据发送前进行校验是否为BUFF，然后进行数据提交 | JSON |
+| messageType      | string | 说明后端回复数据的类型，可选值有 'STRING','JSON','BUFF'。设为STRING时候不会进行任何处理,接收数据不为STRING将数据串化。设为JSON会接收数据进行JSON.parse处理，接收数据不为JSON字符串将过滤。设为 BUFF不会对数据进行任何处理 | JSON |
 | restartMaxNumber | number | 最大重连次数 | 3 |
-
 | restartTinterval | number | 重连机制间隔,单位ms | 3000 |
 
 
