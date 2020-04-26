@@ -1,11 +1,27 @@
 {
   "name": "socket.c",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/app.js",
+    "build:cjs": "set type=cjs&&rollup -c",
+    "build:iife": "set type=iife&&rollup -c"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "express": "^4.17.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.4",
+    "sockjs": "^0.3.20",
+    "websocket": "^1.0.31"
+  },
+  "dependencies": {
+    "nodejs-websocket": "^1.7.2",
+    "rollup": "^2.7.2"
+  }
 }

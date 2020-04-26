@@ -1,12 +1,15 @@
 import hook from './hook'
 import { scoketConfig } from '../config/index'
-import { getSendFun, getMessageFun } from './parse'
+import { subscribe, unSubscribe, runSubscribe } from './subscribe'
 
 class app extends hook {
     constructor(config = scoketConfig) {
+        config = Object.assign(scoketConfig, config)
         super(config)
+        this.cap = null
         this.socket = null
         this.url = config.url
+
         // 当前网络状态，0~3
         this.networkStatus = 0
 
@@ -19,17 +22,16 @@ class app extends hook {
         // 重连配置
         this.resatrtNumber = 0
         this.restartMaxNumber = config.restartMaxNumber
-
-        this.setSendType(config.sendType)
-        this.setMessageType(config.messageType)
+        this.restartTinterval = config.restartTinterval
 
         this.init()
     }
+    
     init() {
         this.client(this.url)
-        this.linstenMessage()
         this.listenOpen()
-        this.listenError()
+        this.linstenMessage()
+        // this.listenError()
         this.listenClose()
     }
     client(url=this.url) {
@@ -37,13 +39,12 @@ class app extends hook {
         this.url = url
     }
     listenOpen() {
-        this.startHeart()
-        setTimeout(() => {
-            if (this.socket.readyState === 0 || this.socket.readyState === 1) {
-                this.networkStatus = 3
-                this.resatrtNumber = 0
-            }
-        }, 1000)
+        this.socket.onopen = () => {
+            console.log('连接成功')
+            this.startHeart()
+            this.resatrtNumber = 0
+            this.onOpen()
+        }
     }
     listenError() {
         this.socket.onerror = () => {
@@ -54,40 +55,46 @@ class app extends hook {
     listenClose() {
         this.socket.onclose = () => {
             console.log('网络连接已断开')
-            this.restartClient()
+            if (this.resatrtNumber > 0) {
+                clearTimeout(this.cap)
+                this.cap = setTimeout(this.restartClient.bind(this), this.restartTinterval)
+            } else {
+                this.restartClient()
+            }
         }
     }
     linstenMessage() {
         this.socket.onmessage = (res) => {
+            res = res.data
             // 心跳包
             if (res === this.heartBeat[1]) {
                 this.heartNumber = 0
                 return
             } else {
                 let result = this.parse(res)
-                return result && this.onMessage(result)
+                return result && this.onMessage(result) && runSubscribe(this.id, result)
             }
         }
     }
     startHeart() {
-        if (window.requestIdleCallback) {
-            window.requestIdleCallback = () => {
+        if (window.requestAnimationFrame) {
+            window.requestAnimationFrame(() => {
                 this.send(this.heartBeat[0])
-                setTimeout(() => this.startHeart(), this.hearTinterval)
-            }
+                setTimeout(this.startHeart.bind(this), this.hearTinterval)
+            })
         } else {
             this.send(this.heartBeat[0])
-            setTimeout(() => this.startHeart(), this.hearTinterval)
+            setTimeout(this.startHeart.bind(this), this.hearTinterval)
         }
     }
     send(msg) {
         if (this.socket.readyState !== 0 && this.socket.readyState !== 1) {
             console.error('socket未连接')
-            return false
+            return
         }
         if (msg === this.heartBeat[0]) {
-            this.setHeartNumber(1)
             this.socket.send(msg)
+            this.setHeartNumber(1)
         } else {
             this.socket.send(this.ify(msg))
             return true
@@ -110,26 +117,28 @@ class app extends hook {
             delete this[i]
         }
     }
+    subscribe(callback = function() {}) {
+        return subscribe(this.ID, callback)
+    }
+    unSubscribe(id) {
+        unSubscribe(this.id, id)
+    }
     // 重新连接
     restartClient() {
         this.networkStatus = 0
         this.heartNumber = 0
         this.resatrtNumber += 1
+        
         if (this.restartMaxNumber < this.resatrtNumber) {
             this.onClose()
-            return console.log('无法进行重新连接，原因：已超过最大重连次数或被手动关闭')
+            console.error('无法进行重新连接，原因：已超过最大重连次数或被手动关闭')
+            return
         }
         this.onRes(this)
         this.init()
     }
-    setSendType(type = config.sendType) {
-        this.ify = getSendFun(type)
-    }
-    setMessageType(type = config.sendType) {
-        this.parse = getMessageFun(type)
-    }
-    setHeartNumber(data) {
-        this.heartNumber += data
+    setHeartNumber(num) {
+        this.heartNumber += num
         this.networkStatus = 4 - this.heartNumber 
         if (this.heartNumber > this.heartMaxNumber) {
             this.socket.close()

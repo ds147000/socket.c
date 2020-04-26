@@ -62,7 +62,7 @@ const messageJson = function(data) {
     try {
         return JSON.parse(data)
     } catch (error) {
-        console.error('警告：发送数据不为json，已屏蔽。数据为：', data)
+        console.error('警告：结束数据不为json，已屏蔽。数据为：', data)
     }
 }
 
