@@ -9,9 +9,10 @@
     <script src="./socket.c.min.js"></script>
     <script>
         var socket = SocketC.createConnection({
-            url: 'ws://192.168.1.141:9999',
+            url: 'ws://39.108.128.154:30701/websocket/6632556647371808769',
             sendType: 'STRING',
-            messgaeType: 'STRING'
+            messgaeType: 'STRING',
+            heartBeat: [0, 1]
         })
         socket.onOpen = () => {
             socket.send("1212")

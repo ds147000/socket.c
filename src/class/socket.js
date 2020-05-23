@@ -40,7 +40,6 @@ class app extends hook {
     }
     listenOpen() {
         this.socket.onopen = () => {
-            console.log('连接成功')
             this.startHeart()
             this.resatrtNumber = 0
             this.onOpen()
@@ -48,13 +47,11 @@ class app extends hook {
     }
     listenError() {
         this.socket.onerror = () => {
-            console.log('网络连接发生错误已断开')
             this.restartClient()
         }
     }
     listenClose() {
         this.socket.onclose = () => {
-            console.log('网络连接已断开')
             if (this.resatrtNumber > 0) {
                 clearTimeout(this.cap)
                 this.cap = setTimeout(this.restartClient.bind(this), this.restartTinterval)
