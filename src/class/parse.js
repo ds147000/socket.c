@@ -38,7 +38,7 @@ const sendJson = function(data) {
     if (typeof data === 'object') {
         return JSON.stringify(data)
     } else {
-        console.error('警告：发送数据不为json，已屏蔽。数据为：', data)
+        console.warn('警告：发送数据不为json，已屏蔽。数据为：', data)
     }
 }
 
@@ -46,7 +46,7 @@ const sendBuff = function(data) {
     if (typeof data === 'object' && data.byteLength !== undefined) {
         return data
     } else {
-        console.error('警告：发送数据不为buff，已屏蔽。数据为：', data)
+        console.warn('警告：发送数据不为buff，已屏蔽。数据为：', data)
     }
 }
 
@@ -62,7 +62,7 @@ const messageJson = function(data) {
     try {
         return JSON.parse(data)
     } catch (error) {
-        console.error('警告：结束数据不为json，已屏蔽。数据为：', data)
+        console.warn('警告：结束数据不为json，已屏蔽。数据为：', data)
     }
 }
 

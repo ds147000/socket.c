@@ -86,7 +86,7 @@ class app extends hook {
     }
     send(msg) {
         if (this.socket.readyState !== 0 && this.socket.readyState !== 1) {
-            console.error('socket未连接')
+            console.warn('socket未连接，数据已取消发送')
             return
         }
         if (msg === this.heartBeat[0]) {
@@ -128,7 +128,7 @@ class app extends hook {
         
         if (this.restartMaxNumber < this.resatrtNumber) {
             this.onClose()
-            console.error('无法进行重新连接，原因：已超过最大重连次数或被手动关闭')
+            console.warn('无法进行重新连接，原因：已超过最大重连次数或被手动关闭')
             return
         }
         this.onRes(this)
